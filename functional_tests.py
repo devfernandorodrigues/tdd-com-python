@@ -5,4 +5,4 @@ options.binary_location = "/Applications/Firefox Developer Edition.app/Contents/
 browser = webdriver.Firefox(options=options)
 browser.get("http://localhost:8000")
 
-assert 'Django' in browser.title
+assert 'Django' in browser.page_source
