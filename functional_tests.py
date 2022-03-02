@@ -24,7 +24,7 @@ class NewVisitorTestCase(unittest.TestCase):
         # lista de tarefas. Ela decide verificar sua homepage
         self.browser.get('http://localhost:8000')
 
-        # Ela percebe que o título da página e o cabeçalho mencionam lista de 
+        # Ela percebe que o título da página e o cabeçalho mencionam lista de
         # tarefas (to-do)
         self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h1').text
@@ -49,7 +49,8 @@ class NewVisitorTestCase(unittest.TestCase):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(
-            any(row.text == '1: Buy peacock feathers' for row in rows)
+            any(row.text == '1: Buy peacock feathers' for row in rows),
+            "New to-do item did not appear in table"
         )
         # Ainda continua havendo uma caixa de texto convidando-a a acrescentar outro
         # item. Ela insere "Use peacock feathers to make a fly" (Usar penas de pavão
