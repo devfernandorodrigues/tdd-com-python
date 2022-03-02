@@ -1,3 +1,4 @@
+import os
 import time
 from django.test import LiveServerTestCase
 
@@ -19,6 +20,9 @@ class NewVisitorTestCase(LiveServerTestCase):
         )
         self.options.binary_location = self.binary_location
         self.browser = webdriver.Firefox(options=self.options)
+        staging_server = os.environ.get('STAGING_SERVER')
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server
 
     def setUp(self):
         self.new_browser()
