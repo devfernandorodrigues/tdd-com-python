@@ -4,6 +4,9 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
+
+MAX_WAIT = 10
 
 
 class NewVisitorTestCase(LiveServerTestCase):
@@ -19,6 +22,19 @@ class NewVisitorTestCase(LiveServerTestCase):
 
     def tearDown(self):
         self.browser.quit()
+
+    def wait_for_row_in_list_table(self, row_text):
+        start_time = time.time()
+        while True:
+            try:
+                table = self.browser.find_element_by_id('id_list_table')
+                rows = table.find_elements(by=By.TAG_NAME, value='tr')
+                self.assertIn(row_text, [row.text for row in rows])
+                return
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
 
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
@@ -50,9 +66,8 @@ class NewVisitorTestCase(LiveServerTestCase):
         # Quando ela tecla enter, a página é atualizada, e agora a página lista
         # "1: Buy peacock feathers" como um item em uma lista de tarefas
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
+        self.wait_for_row_in_list_table('1: Buy peacock feathers')
 
-        self.check_for_row_in_list_table('1: Buy peacock feathers')
         # Ainda continua havendo uma caixa de texto convidando-a a acrescentar outro
         # item. Ela insere "Use peacock feathers to make a fly" (Usar penas de pavão
         # para fazer um fly - Edith é bem metódica)
@@ -62,8 +77,8 @@ class NewVisitorTestCase(LiveServerTestCase):
         time.sleep(1)
 
         # A página é atualizada novamente e agora mostra os dois itens em sua lisat
-        self.check_for_row_in_list_table('1: Buy peacock feathers')
-        self.check_for_row_in_list_table('2: Use a peacock feathers to make a fly')
+        self.wait_for_row_in_list_table('2: Use a peacock feathers to make a fly')
+        self.wait_for_row_in_list_table('1: Buy peacock feathers')
 
         # Edith se pergunta se o site lembrará de sua lista. Então ela nota
         # que o site gerou um URL único para ela -- há um pequeno
