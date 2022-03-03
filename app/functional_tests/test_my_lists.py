@@ -6,9 +6,6 @@ from .base import FunctionalTest
 
 User = get_user_model()
 
-MAX_WAIT = 10
-
-
 class MyListTest(FunctionalTest):
 
     def create_pre_authenticated_session(self, email):
