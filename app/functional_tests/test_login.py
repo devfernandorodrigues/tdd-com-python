@@ -32,7 +32,7 @@ class LoginTest(FunctionalTest):
 
         # A mensagem contém um link com url
         self.assertIn('Use this link to log in', email.body)
-        url_search = re.search(r'https://.+/.+$', email.body)
+        url_search = re.search(r'http://.+/.+$', email.body)
         if not url_search:
             self.fail(f'Could not find url in email body:\n{email.body}')
         url = url_search.group(0)
