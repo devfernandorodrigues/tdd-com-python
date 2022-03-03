@@ -16,17 +16,12 @@
               action="{% block form_action %}{% endblock %}"
               class="mt-3"
             >
-              <input
-                name="item_text"
-                id="id_new_item"
-                placeholder="Enter a to-do item"
-                class="form-control input-lg"
-              />
+              {{ form.text }}
               {% csrf_token %}
-              {% if error %}
-              <div class="form-group has-error">
-                <span class="help-block">{{ error }}</span>
-              </div>
+              {% if form.errors %}
+                <div class="form-group has-error">
+                  <div class="help-block">{{ form.text.errors }}</d>
+                </div>
               {% endif %}
             </form>
           </div>
