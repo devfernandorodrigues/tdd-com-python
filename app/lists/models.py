@@ -20,6 +20,10 @@ class List(models.Model):
         Item.objects.create(text=first_item_text, list=list_)
         return list_
 
+    @property
+    def name(self):
+        return self.item_set.first().text
+
 class Item(models.Model):
     text = models.TextField(default='')
     list = models.ForeignKey(List, on_delete=models.CASCADE, default=None)

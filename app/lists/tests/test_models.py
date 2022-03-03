@@ -95,3 +95,11 @@ class ListModelTest(TestCase):
 
         new_list = List.objects.first()
         self.assertEqual(list_, new_list)
+
+    def test_list_name(self):
+        user = User.objects.create()
+
+        List.create_new(first_item_text='new item text', owner=user)
+
+        new_list = List.objects.first()
+        self.assertEqual(new_list.name, 'new item text')
