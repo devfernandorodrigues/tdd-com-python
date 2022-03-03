@@ -1,6 +1,6 @@
 import os
 import time
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,7 +9,7 @@ from selenium.common.exceptions import WebDriverException
 MAX_WAIT = 10
 
 
-class FunctionalTest(LiveServerTestCase):
+class FunctionalTest(StaticLiveServerTestCase):
 
     def new_browser(self):
         self.options = webdriver.FirefoxOptions()
