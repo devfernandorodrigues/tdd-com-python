@@ -1,6 +1,9 @@
 import os
 import time
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.conf import settings
+from .server_tools import create_session_on_server
+from .management.commands.create_session import create_pre_authenticated_session
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -33,10 +36,12 @@ class FunctionalTest(StaticLiveServerTestCase):
             "Edition.app/Contents/MacOS/firefox-bin"
         )
         self.options.binary_location = self.binary_location
-        self.browser = webdriver.Firefox(options=self.options)
+        browser = webdriver.Firefox(options=self.options)
+        self.browser = browser
         self.staging_server = os.environ.get('STAGING_SERVER')
         if self.staging_server:
             self.live_server_url = 'http://' + self.staging_server
+        return browser
 
     def setUp(self):
         self.new_browser()
@@ -81,3 +86,19 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.get_item_input_box().send_keys(Keys.ENTER)
         item_number = num_rows + 1
         self.wait_for_row_in_list_table(f'{item_number}: {item_text}')
+
+    def create_pre_authenticated_session(self, email):
+
+        if self.staging_server:
+            session_key = create_session_on_server(email)
+        else:
+            session_key = create_pre_authenticated_session(email)
+
+        ## para definir um cookie, precisamos antes acessar o domínio.
+        ## as páginas 404 são as que carregam mais rapidamente!
+        self.browser.get(self.live_server_url + "/404_no_such_url/")
+        self.browser.add_cookie(dict(
+            name=settings.SESSION_COOKIE_NAME,
+            value=session_key,
+            path='/'
+        ))
