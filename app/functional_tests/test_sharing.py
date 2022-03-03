@@ -44,7 +44,7 @@ class SharingTest(FunctionalTest):
         self.browser = oni_browser
         MyListsPage(self).go_to_my_lists_page()
 
-        # Ele vê ai a lista de Edith!
+        # Ele vê a lista de Edith!
         self.browser.find_element_by_link_text('Get help').click()
 
         # Na página de lista, Oniciferous pode ver que a lista é de Edith

@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from lists.forms import ShareForm
 
 from lists.forms import NewListForm
 from lists.forms import EMPTY_ITEM_ERROR
@@ -93,3 +94,16 @@ class NewListFormTest(TestCase):
         list_ = form.save(owner=user)
 
         self.assertEqual(list_.owner, None)
+
+
+class ShareFormTest(TestCase):
+
+    def test_form_valid_with_correct_email(self):
+        email = 'test@example.com'
+        form = ShareForm(data={'sharee': email})
+        self.assertTrue(form.is_valid())
+
+    def test_form_invalid_with_wrong_email(self):
+        email = 'wrongemaail'
+        form = ShareForm(data={'sharee': email})
+        self.assertFalse(form.is_valid())

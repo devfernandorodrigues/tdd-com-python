@@ -103,3 +103,11 @@ class ListModelTest(TestCase):
 
         new_list = List.objects.first()
         self.assertEqual(new_list.name, 'new item text')
+
+    def test_can_share_with_other_users(self):
+        user = User.objects.create()
+        list_ = List.objects.create()
+
+        list_.shared_with.add(user)
+
+        self.assertEqual(list_.shared_with.count(), 1)

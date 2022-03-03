@@ -1,3 +1,4 @@
+from unittest import skip
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils.html import escape
@@ -214,3 +215,37 @@ class MyListsTest(TestCase):
         response = self.client.get('/lists/users/a@b.com/')
 
         self.assertEqual(response.context['owner'], correct_user)
+
+
+class ShareList(TestCase):
+
+    def test_redirects_after_POST(self):
+        list_ = List.objects.create()
+
+        response = self.client.post(f'/lists/{list_.id}/share', data={
+            'sharee': 'a@b.com',
+        })
+
+        self.assertRedirects(response, f'/lists/{list_.id}/')
+
+    def test_add_users_on_share(self):
+        list_ = List.objects.create()
+
+        self.client.post(f'/lists/{list_.id}/share', data={
+            'sharee': 'a@b.com',
+        })
+
+        list_.refresh_from_db()
+        self.assertEqual(list_.shared_with.count(), 1)
+
+
+
+    def test_uses_form_to_valid_data(self):
+        list_ = List.objects.create()
+
+        self.client.post(f'/lists/{list_.id}/share', data={
+            'sharee': 'wrongemail',
+        })
+
+        list_.refresh_from_db()
+        self.assertEqual(list_.shared_with.count(), 0)

@@ -1,6 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect, render
 
+from lists.forms import ShareForm
 from lists.forms import NewListForm
 from lists.forms import ExistingListItemForm
 
@@ -37,3 +39,12 @@ def new_list(request):
 def my_lists(request, email):
     owner = User.objects.get(email=email)
     return render(request, 'my_lists.html', {"owner": owner})
+
+
+def share_list(request, list_id):
+    list_ = List.objects.get(id=list_id)
+    form = ShareForm(data=request.POST)
+    if form.is_valid():
+        user, _ = User.objects.get_or_create(email=request.POST['sharee'])
+        list_.shared_with.add(user)
+    return redirect(list_)
