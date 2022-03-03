@@ -192,6 +192,12 @@ class NewListTestCase(TestCase):
         list_ = List.objects.first()
         self.assertEqual(list_.owner, user)
 
+    def test_list_owner_is_saved_if_user_is_not_authenticated(self):
+        self.client.post('/lists/new', data={'text': 'new item'})
+
+        list_ = List.objects.first()
+        self.assertEqual(list_.owner, None)
+
 class MyListsTest(TestCase):
 
     def test_my_lists_url_renders_my_lists_template(self):

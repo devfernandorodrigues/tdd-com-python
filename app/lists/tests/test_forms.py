@@ -1,10 +1,16 @@
+from unittest.mock import Mock
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+from lists.forms import NewListForm
 from lists.forms import EMPTY_ITEM_ERROR
 from lists.forms import DUPLICATE_ITEM_ERROR
 from lists.forms import ItemForm
 from lists.forms import ExistingListItemForm
 from lists.models import Item, List
+
+
+User = get_user_model()
 
 
 class ItemFormTest(TestCase):
@@ -67,3 +73,23 @@ class ExistingListItemFormTest(TestCase):
         new_item = form.save()
 
         self.assertEqual(new_item, Item.objects.first())
+
+class NewListFormTest(TestCase):
+
+    def test_save_creates_new_list_from_post_data_if_user_is_authenticated(self):
+        user = User.objects.create(email='a@b.com')
+        form = NewListForm(data={'text': 'new item text'})
+
+        form.is_valid()
+        list_ = form.save(owner=user)
+
+        self.assertEqual(list_.owner, user)
+
+    def test_save_creates_new_list_from_post_data_if_user_is_not_authenticated(self):
+        user = Mock(is_authenticated=False)
+        form = NewListForm(data={'text': 'new item text'})
+
+        form.is_valid()
+        list_ = form.save(owner=user)
+
+        self.assertEqual(list_.owner, None)
