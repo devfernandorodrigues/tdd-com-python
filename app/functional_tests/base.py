@@ -6,6 +6,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import WebDriverException
 
+from .server_tools import reset_database
+
 MAX_WAIT = 10
 
 
@@ -31,12 +33,14 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
         self.options.binary_location = self.binary_location
         self.browser = webdriver.Firefox(options=self.options)
-        staging_server = os.environ.get('STAGING_SERVER')
-        if staging_server:
-            self.live_server_url = 'http://' + staging_server
+        self.staging_server = os.environ.get('STAGING_SERVER')
+        if self.staging_server:
+            self.live_server_url = 'http://' + self.staging_server
 
     def setUp(self):
         self.new_browser()
+        if self.staging_server:
+            reset_database()
 
     def tearDown(self):
         self.browser.quit()
