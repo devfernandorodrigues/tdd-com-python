@@ -30,3 +30,5 @@ Some notes about TDD:
 - It's very important to refactor your tests and your production code.
 - The tests gives you confidence to change your code.
 - Sometimes monkey patch your code is not a good idea. It can couple your code with a implementation.
+- Test what happens, not how you do it.
+- It's better to test the behavior, not how you do it.
