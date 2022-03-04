@@ -6,11 +6,6 @@
 
 {% block table %}
   <table id="id_list_table" class="table">
-    {% for item in list.item_set.all %}
-      <tr>
-        <td>{{ forloop.counter }}: {{ item.text }}</td>
-      </tr>
-    {% endfor %}
   </table>
 
   {% if list.owner %}
@@ -45,4 +40,15 @@
     />
     {% csrf_token %}
   </form>
+{% endblock %}
+
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      var url = "{% url 'api_list' list.id %}"
+      console.log(url)
+      window.Superlists.initialize(url)
+    })
+  </script>
 {% endblock %}
